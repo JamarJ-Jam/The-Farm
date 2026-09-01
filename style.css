@@ -192,7 +192,7 @@ body {
     transform: translateY(-2px);
 }
 
-#chat-modal {
+.chat-modal {
     position: fixed;
     bottom:20px;
     right: 20px;
@@ -213,7 +213,7 @@ body {
     padding: 1rem;
     display: flex;
     justify-content: space-between;
-    align-item: center;
+    align-items: center;
 }
 
 .chat-header h3 {
@@ -221,7 +221,7 @@ body {
     margin: 0;
 }
 
-#close-chat {
+.close-chat {
     background: none;
     border: none;
     color: #FFFFFF;
