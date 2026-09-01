@@ -175,7 +175,7 @@ body {
     font-weight: 600;
 }
 
-.orderbtn button {
+.orderBtn button {
     background-color: #ECC94B;
     color: #1A202C;
     border: none;
@@ -187,12 +187,12 @@ body {
     transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
-.orderbtn button:hover {
+.orderBtn button:hover {
     background-color: #D69E2E;
     transform: translateY(-2px);
 }
 
-.chat-modal {
+#chat-modal {
     position: fixed;
     bottom:20px;
     right: 20px;
@@ -221,7 +221,7 @@ body {
     margin: 0;
 }
 
-.close-chat {
+#close-chat {
     background: none;
     border: none;
     color: #FFFFFF;
