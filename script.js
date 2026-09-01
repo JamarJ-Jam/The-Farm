@@ -59,43 +59,61 @@ function handleSendMessage() {
     }, 600); //600ms slight delayfor natural conversational feel
 }
 
-function completeOrder() {
-    const formattedMessage = `Hi The Daily nest! I'd like to place an order:%0A` + 
-    `• Name: ${encodeURIComponent(orderData.name)}%0A` + 
-    `• Quantity: ${encodeURIComponent(orderData.quantity)}%0A` + 
-    `• Delivery Address: ${encodeURIComponent(orderData.address)}`;
+async function sendOrderToBackend() {
+    const endpointURL = "https://hook.us2.make.com/0nti4xn37xfgojkwdqmohf1jv3tx1m4p";
 
-    const phoneNumber = "18768902808";
-    const whatsappURL = `https://wa.me/${phoneNumber}?text=${formattedMessage}`;
-
-    setTimeout(() => {
-        const actionContainer = document.createElement('div');
-        actionContainer.style.textAlign = 'center';
-        actionContainer.style.marginTop = '0.5rem';
-
-        const confirmBtn = document.createElement('button');
-        confirmBtn.textContent = 'Send Order via WhatsApp 🚀';
-        confirmBtn.style.cssText =`
-            background-color: #25D366;
-            color: white;
-            border: none;
-            padding: 0.6rem 1rem;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-        `;
-
-        confirmBtn.addEventListener('click', () => {
-            window.open(whatsappURL, '_blank');
+    try {
+        const response = await fetch(endpointURL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify({
+                Name: orderData.name,
+                Quantity: orderData.quantity.toLowerCase().includes('dozen')
+                    ? orderData.quantity
+                    : `${orderData.quantity} dozen`,
+                Address: orderData.address,
+                _subject: "New Egg Order - The Daily Nest"
+            })
         });
 
-        chatBody.appendChild(actionContainer);
-        actionContainer.appendChild(confirmBtn);
-        chatBody.scrollTop = chatBody.scrollHeight;
-    }, 1000);
+        if (response.ok) {
+            return true;
+        } else {
+            console.error("Submission error:", response.statusText);
+            return false;
+        }
+    } catch (error) {
+        console.error("Network error:", error);
+        return false;
+    }
+}
+
+async function completeOrder() {
+    appendMessage("Submitting your order to out team...", 'bot-message');
+
+    const isSuccess = await sendOrderToBackend();
+
+    setTimeout(() => {
+        if (isSuccess) {
+            appendMessage(
+                `🎉 Order Received, ${orderData.name}!\n\n` +
+                `• Quantity: ${orderData.quantity} dozen\n` +
+                `• Delivery Address: ${orderData.address}\n\n` +
+                `We have logged your order and will contact you directly to confirm delivery. Thank you for choosing The Daily Nest!`, 
+                'bot-message'
+            );
+        } else {
+            appendMessage(
+                "Oops! We had trouble submitting your order automatically. Please try submitting again or reach out to us directly.",
+                'bot-message'
+            );
+        }
+    }, 600);
 }
     
-
 //Open chat modal when "Order here" is pressed
 orderHeroBtn.addEventListener('click', () => {
     chatModal.style.display = 'flex';
